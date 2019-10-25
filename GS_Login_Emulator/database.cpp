@@ -78,7 +78,7 @@ map<string, string> CMySQL :: GetData( string username )
 
 	if( m_Valid && UserExists(username) )
 	{
-		string Query = "SELECT id, name, password, email, country, session FROM users WHERE name='" + username + "'";
+		string Query = "SELECT id, name, password, email, country, rank_id FROM player WHERE name='" + username + "'";
 
 		if( mysql_real_query( m_Connection, Query.c_str(), Query.size() ) == 0 )
 		{
@@ -113,7 +113,7 @@ map<string, string> CMySQL :: GetData( string username )
 					ss << temp;
 					Values["profileid"] = ss.str();
 
-					Values["session"] = row[5];
+					Values["rank_id"] = row[5];
 				}					
 				
 				mysql_free_result( result );
@@ -134,7 +134,7 @@ map<string, string> CMySQL :: GetData( string email, string password )
 
 	if( m_Valid )
 	{
-		string Query = "SELECT id, name, country, session FROM users WHERE email='" + email + "' AND password='" + password + "'";
+		string Query = "SELECT id, name, country, rank_id FROM player WHERE email='" + email + "' AND password='" + password + "'";
 
 		if( mysql_real_query( m_Connection, Query.c_str(), Query.size() ) == 0 )
 		{
@@ -151,7 +151,7 @@ map<string, string> CMySQL :: GetData( string email, string password )
 					Values["password"] = password;
 					Values["email"] = email;
 					Values["country"] = row[2];
-					Values["session"] = row[3];
+					Values["rank_id"] = row[3];
 
 					unsigned int id = 0, temp;
 					stringstream ss;
@@ -192,14 +192,14 @@ void CMySQL :: SetData( string username, map<string, string>& data )
 		string Password = data["password"];
 		string EMail = data["email"];
 		string Country = data["country"];
-		string Session = data["session"];
+		string Session = data["rank_id"];
 
 		stringstream Query;
-		Query << "UPDATE users SET "
+		Query << "UPDATE player SET "
 			<< "password='" << (Password.empty() ? OldValues["password"] : Password) << "', "
 			<< "email='" << (EMail.empty() ? OldValues["email"] : EMail) << "', "
 			<< "country='" << (Country.empty() ? OldValues["country"] : Country) << "', "
-			<< "session='" << (Session.empty() ? OldValues["session"] : Session) << "' "
+			<< "rank_id='" << (Session.empty() ? OldValues["rank_id"] : Session) << "' "
 			<< "WHERE name='" << username << "'";
 
 		if( mysql_real_query( m_Connection, Query.str().c_str(), Query.str().size() ) != 0 )
@@ -210,7 +210,7 @@ void CMySQL :: SetData( string username, map<string, string>& data )
 bool CMySQL :: UserExists( string Username )
 {
 	bool Existing = false;
-	string Query = "SELECT COUNT(*) FROM users WHERE name='" + Username + "'";
+	string Query = "SELECT COUNT(*) FROM player WHERE name='" + Username + "'";
 
 	if( m_Valid )
 	{
@@ -241,7 +241,7 @@ void CMySQL :: CreateUser( string Username, string Password, string Mail, string
 {
 	if( m_Valid && !UserExists(Username) )
 	{
-		string Query = "INSERT INTO users (name, password, email, country) VALUES ('";
+		string Query = "INSERT INTO player (name, password, email, country) VALUES ('";
 		Query += Username + "', '";
 		Query += Password + "', '";
 		Query += Mail + "', '";
