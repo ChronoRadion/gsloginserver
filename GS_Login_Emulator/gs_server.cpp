@@ -34,12 +34,12 @@ void SignalCatcher( int s )
 int main( int argc, char** argv )
 {
 	// cout -> gs_login.log
-	ofstream logfile( "gs_log.log" ); 
+	ofstream logfile( "/opt/gsloginemu/gs_log.log" ); 
 	CLog log( cout, logfile );
 
 	cout << "[GS_SERVER] starting up" << endl;
 
-	gCFGFile = "gs_server.cfg";
+	gCFGFile = "/opt/gsloginemu/gs_server.cfg";
 
 	if( argc > 1 && argv[1] )
 		gCFGFile = argv[1];
@@ -88,7 +88,7 @@ CGSServer :: CGSServer( CConfig* CFG )
 	: m_Exiting(false)
 {
 	if( CFG->GetString("db_type", "sqlite3") == "sqlite3" )
-		m_DB = new CSQLite3( CFG->GetString("db_sqlite3_file", "gs_login_server.db3") );
+		m_DB = new CSQLite3( CFG->GetString("db_sqlite3_file", "/opt/gsloginemu/gs_login_server.db3") );
 	else
 		m_DB = new CMySQL( CFG->GetString("db_mysql_server", string()), CFG->GetString("db_mysql_database", "gs_login_server"), 
 						   CFG->GetString("db_mysql_user", string()), CFG->GetString("db_mysql_password", string()), CFG->GetInt("db_mysql_port", 0) );
